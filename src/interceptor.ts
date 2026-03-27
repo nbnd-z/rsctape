@@ -2,7 +2,7 @@
 import { PassThrough } from 'stream';
 import picomatch from 'picomatch';
 import type { IncomingMessage, ServerResponse } from 'http';
-import type { InterceptorOptions, Fixture, FixtureMeta } from './types';
+import type { InterceptorOptions, Fixture, FixtureMeta, FormDataMetadata } from './types';
 import { parseFormData } from './formdata-parser';
 import { saveFixture } from './fixture-store';
 import { loadConfigSync } from './config';
@@ -127,6 +127,10 @@ function interceptRequest(
   });
 
   // Wrap res.write() and res.end() to collect response chunks (Req 1.8, 1.9)
+  // Wrap res.write() and res.end() to collect response chunks (Req 1.8, 1.9)
+  // Note: Node.js res.write/res.end have multiple overload signatures.
+  // We use `as any` for the forwarding call because covering all overloads
+  // in the wrapper signature is impractical. The runtime behavior is correct.
   const responseChunks: Buffer[] = [];
   const originalWrite = res.write.bind(res);
   const originalEnd = res.end.bind(res);
@@ -209,13 +213,19 @@ async function processCapture(
 
   // Parse FormData from request body
   let parsedInput: Record<string, unknown>;
-  let formDataMetadata;
+  let formDataMetadata: FormDataMetadata | undefined;
   try {
     const parsed = await parseFormData(requestBody, contentType);
     parsedInput = parsed.fields;
     formDataMetadata = parsed.metadata;
-  } catch {
+  } catch (err) {
+    console.error(`${PREFIX} FormData parse error for action ${actionId}:`, err);
     parsedInput = { raw: requestBody.toString() };
+    formDataMetadata = {
+      invocationType: 'form',
+      frameworkHint: 'unknown',
+      parseFailed: true,
+    };
   }
 
   const fixture: Fixture = {
