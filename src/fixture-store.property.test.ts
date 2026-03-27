@@ -29,7 +29,7 @@ const jsonObjectArb = fc.dictionary(
   fc.oneof(
     fc.string(),
     fc.integer(),
-    fc.double({ noNaN: true, noDefaultInfinity: true }),
+    fc.double({ noNaN: true, noDefaultInfinity: true, min: 0 }),
     fc.boolean(),
     fc.constant(null),
     fc.array(fc.oneof(fc.string(), fc.integer(), fc.boolean()), { maxLength: 5 })

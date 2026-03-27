@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { PassThrough } from 'stream';
+import picomatch from 'picomatch';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { InterceptorOptions, Fixture, FixtureMeta } from './types';
 import { parseFormData } from './formdata-parser';
 import { saveFixture } from './fixture-store';
-import { loadConfig } from './config';
-import { detectFramework } from './framework-detect';
+import { loadConfigSync } from './config';
+import { detectFrameworkSync } from './framework-detect';
 
 // Use require to get the mutable CJS module object.
 // ESM `import * as http` produces a frozen namespace that cannot be patched.
@@ -36,27 +37,23 @@ export function register(options?: Partial<InterceptorOptions>): void {
   registered = true;
 
   const verbose = options?.verbose ?? process.env.RSCTAPE_VERBOSE === 'true';
-  const fixtureDir = options?.fixtureDir ?? './fixtures/actions';
-  const ignore = options?.ignore ?? [];
 
-  // Load config asynchronously in background, merge with options
-  let resolvedFixtureDir = fixtureDir;
-  let resolvedIgnore = ignore;
+  // Load config synchronously to avoid race condition
+  let resolvedFixtureDir = options?.fixtureDir ?? './fixtures/actions';
+  let resolvedIgnore = options?.ignore ?? [];
 
-  loadConfig().then((config) => {
+  try {
+    const config = loadConfigSync();
     if (!options?.fixtureDir) resolvedFixtureDir = config.fixtureDir;
     if (!options?.ignore) resolvedIgnore = config.ignore;
-  }).catch(() => {
+  } catch {
     // Config load failure is non-fatal, use defaults
-  });
+  }
 
   // Detect framework and log startup (Req 10.4, 10.5)
-  detectFramework().then((framework) => {
-    console.log(`${PREFIX} Recording server actions...`);
-    console.log(`${PREFIX} Detected framework: ${framework}`);
-  }).catch(() => {
-    console.log(`${PREFIX} Recording server actions...`);
-  });
+  const framework = detectFrameworkSync();
+  console.log(`${PREFIX} Recording server actions...`);
+  console.log(`${PREFIX} Detected framework: ${framework}`);
 
   // Monkey-patch http.createServer (Req 1.5, 1.7, 1.13)
   _originalCreateServer = httpModule.createServer;
@@ -96,13 +93,8 @@ export function register(options?: Partial<InterceptorOptions>): void {
 }
 
 function shouldIgnore(actionId: string, patterns: string[]): boolean {
-  for (const pattern of patterns) {
-    // Escape regex special chars, then convert glob * to .*
-    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp('^' + escaped.replace(/\*/g, '.*') + '$');
-    if (regex.test(actionId)) return true;
-  }
-  return false;
+  if (patterns.length === 0) return false;
+  return picomatch.isMatch(actionId, patterns);
 }
 
 function interceptRequest(
@@ -175,15 +167,24 @@ function interceptRequest(
 
     const result = originalEnd(chunk, encodingOrCallback as any, callback as any);
 
-    // Async fixture write — don't block response (Req 1.11)
-    // Note: bodyChunks may still be accumulating from the PassThrough stream.
-    // We use setImmediate to give the event loop a tick for the PassThrough
-    // to finish flushing before we process the capture.
-    setImmediate(() => {
+    // Wait for request body to be fully buffered via PassThrough,
+    // then save fixture asynchronously (Req 1.11)
+    let captured = false;
+    const doCapture = () => {
+      if (captured) return;
+      captured = true;
       processCapture(actionId, req, res, bodyChunks, responseChunks, opts).catch((err) => {
         console.error(`${PREFIX} Error saving fixture:`, err);
       });
-    });
+    };
+
+    if (passThrough.readableEnded || passThrough.destroyed) {
+      doCapture();
+    } else {
+      passThrough.once('end', doCapture);
+      // Safety timeout for edge cases (e.g. empty body, broken pipe)
+      setTimeout(doCapture, 5000);
+    }
 
     return result;
   } as any;

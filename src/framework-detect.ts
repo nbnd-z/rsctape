@@ -3,18 +3,20 @@ import * as path from 'path';
 import type { FrameworkType } from './types';
 
 /**
- * Detect the RSC framework used in the project by inspecting
- * package.json dependencies and characteristic config files.
+ * Detect the RSC framework used in the project (sync).
  */
-export async function detectFramework(projectRoot?: string): Promise<FrameworkType> {
+export function detectFrameworkSync(projectRoot?: string): FrameworkType {
   const root = projectRoot ?? process.cwd();
-
-  // Check package.json dependencies
   const detected = detectFromPackageJson(root);
   if (detected !== 'unknown') return detected;
-
-  // Fall back to characteristic files
   return detectFromFiles(root);
+}
+
+/**
+ * Detect the RSC framework used in the project (async, for backward compat).
+ */
+export async function detectFramework(projectRoot?: string): Promise<FrameworkType> {
+  return detectFrameworkSync(projectRoot);
 }
 
 function detectFromPackageJson(root: string): FrameworkType {

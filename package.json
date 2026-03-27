@@ -21,11 +21,13 @@
   "dependencies": {
     "api-tape": "^0.3.0",
     "busboy": "^1.6.0",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "picomatch": "^4.0.4"
   },
   "devDependencies": {
     "@types/busboy": "^1.5.4",
     "@types/node": "^20.14.0",
+    "@types/picomatch": "^4.0.2",
     "fast-check": "^3.19.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"

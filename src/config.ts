@@ -11,7 +11,7 @@ const DEFAULT_CONFIG: RscTapeConfig = {
 };
 
 /**
- * Load configuration from rsctape.config.json.
+ * Load configuration from rsctape.config.json (async).
  * Falls back to defaults when the file does not exist.
  * Throws ConfigError for invalid values.
  */
@@ -21,25 +21,42 @@ export async function loadConfig(projectRoot?: string): Promise<RscTapeConfig> {
 
   let raw: string;
   try {
-    raw = fs.readFileSync(configPath, 'utf-8');
+    raw = await fs.promises.readFile(configPath, 'utf-8');
   } catch {
-    // Config file doesn't exist — use defaults
     return { ...DEFAULT_CONFIG, ignore: [...DEFAULT_CONFIG.ignore] };
   }
 
+  return parseConfig(raw, configPath);
+}
+
+/**
+ * Load configuration synchronously.
+ * Used by the interceptor to avoid race conditions.
+ */
+export function loadConfigSync(projectRoot?: string): RscTapeConfig {
+  const root = projectRoot ?? process.cwd();
+  const configPath = path.join(root, 'rsctape.config.json');
+
+  let raw: string;
+  try {
+    raw = fs.readFileSync(configPath, 'utf-8');
+  } catch {
+    return { ...DEFAULT_CONFIG, ignore: [...DEFAULT_CONFIG.ignore] };
+  }
+
+  return parseConfig(raw, configPath);
+}
+
+function parseConfig(raw: string, configPath: string): RscTapeConfig {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
   } catch {
-    throw new ConfigError(
-      `Invalid JSON in config file: ${configPath}`
-    );
+    throw new ConfigError(`Invalid JSON in config file: ${configPath}`);
   }
 
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new ConfigError(
-      `Config file must be a JSON object: ${configPath}`
-    );
+    throw new ConfigError(`Config file must be a JSON object: ${configPath}`);
   }
 
   const obj = parsed as Record<string, unknown>;

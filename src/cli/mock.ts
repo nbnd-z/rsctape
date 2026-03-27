@@ -39,15 +39,14 @@ export function mockCommand(program: Command): void {
           process.exit(1);
         }
 
-        console.log(`Watching ${fixtureDir} for changes...`);
+        console.log(`Watching ${fixtureDir} for changes... (Ctrl+C to stop)`);
 
         let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
         try {
-          fs.watch(fixtureDir, { recursive: false }, (_event, filename) => {
+          const watcher = fs.watch(fixtureDir, { recursive: false }, (_event, filename) => {
             if (!filename?.endsWith('.json')) return;
 
-            // Debounce: wait 300ms after last change before regenerating
             if (debounceTimer) clearTimeout(debounceTimer);
             debounceTimer = setTimeout(async () => {
               try {
@@ -57,6 +56,14 @@ export function mockCommand(program: Command): void {
               }
             }, 300);
           });
+
+          // Cleanup on process exit
+          const cleanup = () => {
+            watcher.close();
+            if (debounceTimer) clearTimeout(debounceTimer);
+          };
+          process.on('SIGINT', () => { cleanup(); process.exit(0); });
+          process.on('SIGTERM', () => { cleanup(); process.exit(0); });
         } catch (err) {
           console.error(`Cannot watch ${fixtureDir}:`, err);
           process.exit(1);
