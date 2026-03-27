@@ -53,5 +53,13 @@
     "type-generation",
     "developer-tools"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbnd-z/rsctape.git"
+  },
+  "homepage": "https://github.com/nbnd-z/rsctape#readme",
+  "bugs": {
+    "url": "https://github.com/nbnd-z/rsctape/issues"
+  }
 }
