@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Lock file (library — consumers use their own)
+package-lock.json
+
+# Kiro
+.kiro/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Test artifacts
+coverage/
+
+# Fixture output (user-generated, not part of source)
+fixtures/
+
+# Environment
+.env
+.env.local
