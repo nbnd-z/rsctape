@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 import { diffObjects, formatDiffResult, hashValue } from 'api-tape';
-import { loadFixture } from '../fixture-store';
-import { loadConfig } from '../config';
+import { loadFixture } from '../fixture-store.js';
+import { loadConfig } from '../config.js';
 
 export function diffCommand(program: Command): void {
   program

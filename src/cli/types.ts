@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 import { inferType, toPascalCase } from 'api-tape';
-import { loadFixture, listFixtures } from '../fixture-store';
-import { loadConfig } from '../config';
+import { loadFixture, listFixtures } from '../fixture-store.js';
+import { loadConfig } from '../config.js';
 
 // Re-export for testing
 export { toPascalCase, inferType };

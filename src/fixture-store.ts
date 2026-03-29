@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { sanitizeName as apiTapeSanitize } from 'api-tape';
-import type { Fixture, FixtureMeta } from './types';
+import type { Fixture, FixtureMeta } from './types.js';
 
 /**
  * Sanitize a string for use as a filename.

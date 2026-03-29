@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { Fixture, GenerateOptions } from './types';
-import { listFixtures, loadFixture } from './fixture-store';
+import type { Fixture, GenerateOptions } from './types.js';
+import { listFixtures, loadFixture } from './fixture-store.js';
 
 /**
  * Convert an action ID to a valid JavaScript identifier.

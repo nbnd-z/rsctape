@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
-import { listFixtures } from '../fixture-store';
-import { loadConfig } from '../config';
+import { listFixtures } from '../fixture-store.js';
+import { loadConfig } from '../config.js';
 
 export function listCommand(program: Command): void {
   program

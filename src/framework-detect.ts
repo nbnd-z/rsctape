@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { FrameworkType } from './types';
+import type { FrameworkType } from './types.js';
 
 /**
  * Detect the RSC framework used in the project (sync).

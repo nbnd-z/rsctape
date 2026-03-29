@@ -1,7 +1,7 @@
 import type { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
-import { detectFramework } from '../framework-detect';
+import { detectFramework } from '../framework-detect.js';
 
 const CONFIG_TEMPLATE = JSON.stringify({ fixtureDir: './fixtures/actions', ignore: [] }, null, 2);
 

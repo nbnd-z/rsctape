@@ -1,6 +1,6 @@
 import Busboy from 'busboy';
-import type { ParsedFormData, FormDataMetadata } from './types';
-import { detectFrameworkFromFormData } from './framework-detect';
+import type { ParsedFormData, FormDataMetadata } from './types.js';
+import { detectFrameworkFromFormData } from './framework-detect.js';
 
 /**
  * Parse a key like "user[name]" or "tags[]" or "items[0]" into path segments.

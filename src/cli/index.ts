@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { listCommand } from './list';
-import { mockCommand } from './mock';
-import { diffCommand } from './diff';
-import { deleteCommand } from './delete';
-import { typesCommand } from './types';
-import { initCommand } from './init';
+import { listCommand } from './list.js';
+import { mockCommand } from './mock.js';
+import { diffCommand } from './diff.js';
+import { deleteCommand } from './delete.js';
+import { typesCommand } from './types.js';
+import { initCommand } from './init.js';
 
 const program = new Command();
 

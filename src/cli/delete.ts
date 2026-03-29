@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
-import { deleteFixture } from '../fixture-store';
-import { loadConfig } from '../config';
+import { deleteFixture } from '../fixture-store.js';
+import { loadConfig } from '../config.js';
 
 export function deleteCommand(program: Command): void {
   program

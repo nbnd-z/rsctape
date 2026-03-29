@@ -1,6 +1,7 @@
 {
   "name": "rsc-tape",
   "version": "0.1.0",
+  "type": "module",
   "description": "Intercept React Server Actions and generate MSW mock handlers",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,16 +1,16 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { PassThrough } from 'stream';
+import { createRequire } from 'module';
 import picomatch from 'picomatch';
 import type { IncomingMessage, ServerResponse } from 'http';
-import type { InterceptorOptions, Fixture, FixtureMeta, FormDataMetadata } from './types';
-import { parseFormData } from './formdata-parser';
-import { saveFixture } from './fixture-store';
-import { loadConfigSync } from './config';
-import { detectFrameworkSync } from './framework-detect';
+import type { InterceptorOptions, Fixture, FixtureMeta, FormDataMetadata } from './types.js';
+import { parseFormData } from './formdata-parser.js';
+import { saveFixture } from './fixture-store.js';
+import { loadConfigSync } from './config.js';
+import { detectFrameworkSync } from './framework-detect.js';
 
-// Use require to get the mutable CJS module object.
+// Use createRequire to get the mutable CJS http module object.
 // ESM `import * as http` produces a frozen namespace that cannot be patched.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+const require = createRequire(import.meta.url);
 const httpModule = require('http') as typeof import('http');
 
 const PREFIX = '[rsc-tape]';

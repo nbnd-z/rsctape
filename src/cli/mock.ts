@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import type { Command } from 'commander';
-import { generateHandlers } from '../msw-generator';
-import { loadConfig } from '../config';
+import { generateHandlers } from '../msw-generator.js';
+import { loadConfig } from '../config.js';
 
 async function generate(fixtureDir: string, outputPath: string, actionIds?: string[]): Promise<void> {
   const code = await generateHandlers({

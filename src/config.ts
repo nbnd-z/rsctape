@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigError } from 'api-tape';
-import type { RscTapeConfig } from './types';
+import type { RscTapeConfig } from './types.js';
 
 export { ConfigError };
 
