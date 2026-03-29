@@ -15,14 +15,15 @@ export async function register() {
 `;
 
 const WAKU_ENTRY = `// Entry point for Waku
+import { register } from 'rsc-tape';
+
 if (process.env.NODE_ENV === 'development') {
-  const { register } = require('rsc-tape');
   register();
 }
 `;
 
 const GENERIC_SERVER = `// server.js - Add this to your server entry point
-const { register } = require('rsc-tape');
+import { register } from 'rsc-tape';
 register();
 `;
 

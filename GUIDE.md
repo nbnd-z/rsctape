@@ -49,8 +49,9 @@ Next.js automatically calls this file's `register()` on server startup.
 Add to your server entry point, before `http.createServer`:
 
 ```javascript
+import { register } from 'rsc-tape';
+
 if (process.env.NODE_ENV === 'development') {
-  const { register } = require('rsc-tape');
   register();
 }
 ```

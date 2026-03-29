@@ -68,7 +68,7 @@ Add to your entry point:
 
 ```javascript
 if (process.env.NODE_ENV === 'development') {
-  const { register } = require('rsc-tape');
+  const { register } = await import('rsc-tape');
   register();
 }
 ```
@@ -79,7 +79,7 @@ if (process.env.NODE_ENV === 'development') {
 <summary><strong>Custom server</strong></summary>
 
 ```javascript
-const { register } = require('rsc-tape');
+import { register } from 'rsc-tape';
 register();
 // ... your http.createServer() call
 ```

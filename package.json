@@ -5,6 +5,12 @@
   "description": "Intercept React Server Actions and generate MSW mock handlers",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "files": [
     "dist/",
     "README.md",
@@ -17,7 +23,8 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest --run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "api-tape": "^0.3.0",

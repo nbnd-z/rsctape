@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (2026-03-27)
+## 0.1.0 (2026-03-29)
 
 Initial release.
 
@@ -27,6 +27,8 @@ Initial release.
 - **Environment Safety** — only activates when `NODE_ENV=development` or `RSCTAPE_ENABLED=true`. Zero overhead in production.
 - **Error Isolation** — interceptor errors never affect the original request/response flow.
 - **api-tape Integration** — uses api-tape for `ConfigError`, `sanitizeName`, `diffObjects`, `formatDiffResult`, `hashValue`, `inferType`, `toPascalCase`.
+- **ESM Package** — ships as pure ESM (`"type": "module"`), compatible with api-tape and modern Node.js tooling.
+- **Glob Matching** — uses picomatch for proper glob pattern support in ignore config.
 
 ### Correctness Properties (PBT)
 

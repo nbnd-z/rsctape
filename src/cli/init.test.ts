@@ -81,7 +81,7 @@ describe('initCommand', () => {
 
     const writeCalls = vi.mocked(fs.writeFileSync).mock.calls;
     expect(writeCalls[1][0]).toBe(path.join('/fake/project', 'server.js'));
-    expect(writeCalls[1][1]).toContain("require('rsc-tape')");
+    expect(writeCalls[1][1]).toContain("import { register } from 'rsc-tape'");
   });
 
   it('skips config when rsctape.config.json already exists', async () => {
